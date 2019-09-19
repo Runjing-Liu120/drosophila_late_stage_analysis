@@ -7,7 +7,7 @@ results_dir <- './staNMFDicts/'
 
 args <- commandArgs(trailingOnly = TRUE)
 
-K <- 19 # as.integer(args[1])
+K <- as.integer(args[1])
 
 print(paste0('getting PP coeffs for fit with K = ', K))
 
