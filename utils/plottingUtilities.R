@@ -30,7 +30,7 @@ generateImage <- function(template, data) {
 }
 
 
-plotImg <- function(x, template, legend, label) {
+plotImg <- function(x, template, legend, label = NA) {
   # Main plotting function for single embryo image. Plots expression level data
   # in x onto embryo template.
   #
@@ -47,7 +47,11 @@ plotImg <- function(x, template, legend, label) {
   p <- ggplot(img.grid, aes(x, y)) + geom_raster(aes(fill=expr))
   p <- p + scale_fill_gradient2()
 
-  p <- p + ggtitle(label) + theme(axis.line=element_blank(), axis.text.x=element_blank(),
+  if( !(is.na(label))){
+    p <- p + ggtitle(label)
+  }
+
+  p <- p + theme(axis.line=element_blank(), axis.text.x=element_blank(),
         axis.text.y=element_blank(), axis.ticks=element_blank(),
         axis.title.x=element_blank(),
         axis.title.y=element_blank(),
