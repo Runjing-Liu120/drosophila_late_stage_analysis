@@ -1,0 +1,46 @@
+source('../utils/olsLassoFit.R')
+load('../data/lateData.Rdata')
+
+x <- read.csv('../data/clean_x.csv')[, -1]
+
+results_dir <- './staNMFDicts/'
+
+args <- commandArgs(trailingOnly = TRUE)
+
+K <- as.integer(args[1])
+
+print(paste0('getting PP coeffs for fit with K = ', K))
+
+get_PP_coeffs <- function(x, dict){
+  # takes in images in the columns of x and fits the PP coefficients
+  # using lasso to dict
+  PP_coeffs <- matrix(0, dim(dict)[2], dim(x)[2])
+  for(i in 1:dim(x)[2]){
+    PP_coeffs[, i] <- fitBeta(x[, i], dict)
+    
+    if((i %% 20) == 0){
+      prnt <- paste0('(', as.character(i), '/', as.character(dim(x)[2]),
+                     ') images done')
+      print(prnt)
+    }
+  }
+  colnames(PP_coeffs) <- colnames(x)
+  return(PP_coeffs)
+}
+
+# load dictionary 
+dict_file_k <- paste0(results_dir, 'K=', K, '/factorization_99.csv')
+dict <- read.csv(file = dict_file_k, header = FALSE)[, -1]
+
+alpha <- get_PP_coeffs(x, as.matrix(dict))
+
+
+fit <- list(x = x, 
+          gene.names = colnames(x), 
+          alpha = alpha, 
+          dict = dict, 
+          template = late$template)
+
+outfile <- paste0('../data/late_K', K, '.Rdata')
+print(paste0('saving fit into: ', outfile))
+save(fit, file = outfile)
