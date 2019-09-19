@@ -32,6 +32,6 @@ exampleNMF.runNMF(numThreads = nthreads)
 exampleNMF.instability()
 
 # Calculate instability for each K
-np.savetxt("./staNMFDicts/instabilities.csv", \
-            exampleNMF.instabilityarray, \
-            delimiter=",")
+# np.savetxt("./staNMFDicts/instabilities.csv", \
+#             exampleNMF.instabilityarray, \
+#             delimiter=",")

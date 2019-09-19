@@ -1,3 +1,3 @@
 #!/bin/bash
 
-sbatch --array 0-12 run_staNMF.sh
+sbatch --array 3-30 run_staNMF.sh
