@@ -7,7 +7,7 @@ library(Matrix)
 library(stringr)
 
 # load late data 
-n.cores <- 1
+n.cores <- 8
 
 # these the PPs for which we will predict 
 pp.predict <- c(2)
@@ -75,7 +75,6 @@ runReplicate <- function(ii, pp, thresh.y, path, loc, n.cores) {
              rit.param=rit.param,
              select.iter=TRUE,
              n.bootstrap=n.bootstrap,
-             interactions.return=5,
              verbose=TRUE)
   
   filename <- 'irfSpatialFit_pp'
