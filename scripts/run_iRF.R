@@ -7,10 +7,10 @@ library(Matrix)
 library(stringr)
 
 # load late data 
-n.cores <- 8
+n.cores <- 3
 
 # these the PPs for which we will predict 
-pp.predict <- c(2)
+pp.predict <- c(3, 7)
 
 path <- paste0('./irf_fits/')
 dir.create(path, recursive=TRUE)
@@ -38,7 +38,8 @@ stopifnot(dim(dict)[2] == dim(alpha)[1])
 # irf parameters
 ####################
 # the threshold to be a gut gene
-thresh.y <- quantile(dict[, 2], 0.9)
+response <- apply(dict[, pp.predict], 1, max)
+thresh.y <- quantile(response, 0.9)
 
 n.iter <- 25
 n.bootstrap <- 100
@@ -51,18 +52,17 @@ n_pixels <- dim(x)[1]
 train.id <- sample(1:n_pixels, floor(n_pixels * 0.75))
 test.id <- setdiff(1:n_pixels, train.id[[1]])
 
-runReplicate <- function(ii, pp, thresh.y, path, loc, n.cores) {  
+runReplicate <- function(ii, thresh.y, path, loc, n.cores) {  
   set.seed(ii)
-  print(paste('processing pp:', pp))
-  
+
   # keep genes with expression in *any* of these pps
-  which_keep_bool <- colSums(alpha[c(2, 8, 9, 10, 13, 18), ]) > 0
+  which_keep_bool <- colSums(alpha[c(3, 4, 6, 7, 11, 15), ]) > 0
   gn.keep <- colnames(alpha)[which_keep_bool]
   
   print('genes kept')
   print(length(gn.keep))
   # Convert dictionary atom for given pp into binary response by thresholding.
-  y.late <- as.factor(dict[, pp] > thresh.y)
+  y.late <- as.factor(response > thresh.y)
   x.late <- x[,gn.keep]
   
   colnames(x.late) <- tools::toTitleCase(colnames(x.late)) 
@@ -77,11 +77,11 @@ runReplicate <- function(ii, pp, thresh.y, path, loc, n.cores) {
              n.bootstrap=n.bootstrap,
              verbose=TRUE)
   
-  filename <- 'irfSpatialFit_pp'
+  filename <- 'irfSpatialFit_optix'
 
-  save(file=paste0(path, filename, pp, '.Rdata'), 
-       pp, fit, train.id, test.id, x.late, y.late)
+  save(file=paste0(path, filename, '.Rdata'), 
+       fit, train.id, test.id, x.late, y.late)
 }
 
-runReplicate(ii=1, pp=pp.predict, thresh.y=thresh.y, path=path, 
+runReplicate(ii=1, thresh.y=thresh.y, path=path, 
              loc=FALSE, n.cores=n.cores)
