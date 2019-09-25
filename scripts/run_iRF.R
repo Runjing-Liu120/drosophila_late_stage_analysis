@@ -75,6 +75,7 @@ runReplicate <- function(ii, thresh.y, path, loc, n.cores) {
              rit.param=rit.param,
              select.iter=TRUE,
              n.bootstrap=n.bootstrap,
+             interactions.return=5,
              verbose=TRUE)
   
   filename <- 'irfSpatialFit_optix'
