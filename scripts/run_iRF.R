@@ -56,7 +56,8 @@ runReplicate <- function(ii, thresh.y, path, loc, n.cores) {
   set.seed(ii)
 
   # keep genes with expression in *any* of these pps
-  which_keep_bool <- colSums(alpha[c(3, 4, 6, 7, 11, 15), ]) > 0
+  which_keep_bool <- colSums(alpha[c(3, 4, 6, 7, 11, 15), ]) > 0 # for eye pps
+  # which_keep_bool <- colSums(alpha[c(2, 8, 9, 10, 13, 18), ]) > 0 # for gut pps
   gn.keep <- colnames(alpha)[which_keep_bool]
   
   print('genes kept')
@@ -65,7 +66,9 @@ runReplicate <- function(ii, thresh.y, path, loc, n.cores) {
   y.late <- as.factor(response > thresh.y)
   x.late <- x[,gn.keep]
   
-  colnames(x.late) <- tools::toTitleCase(colnames(x.late)) 
+  foo <- tools::toTitleCase(colnames(x.late)) 
+  colnames(x.late) <- as.character(1:dim(x.late)[2])
+
   fit <- iRF(x=x.late[train.id,], 
              y=y.late[train.id], 
              xtest=x.late[test.id,], 
@@ -75,11 +78,10 @@ runReplicate <- function(ii, thresh.y, path, loc, n.cores) {
              rit.param=rit.param,
              select.iter=TRUE,
              n.bootstrap=n.bootstrap,
-             interactions.return=5,
              verbose=TRUE)
   
-  filename <- 'irfSpatialFit_optix'
-
+  filename <- 'irfSpatialFit_foo'
+  colnames(x.late) <- foo
   save(file=paste0(path, filename, '.Rdata'), 
        fit, train.id, test.id, x.late, y.late)
 }
