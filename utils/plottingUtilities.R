@@ -45,7 +45,7 @@ plotImg <- function(x, template, legend, label = NA) {
   img.grid <- as.data.frame(cbind(img.grid, c(img)))
   names(img.grid ) <- c('x', 'y', 'expr')
   p <- ggplot(img.grid, aes(x, y)) + geom_raster(aes(fill=expr))
-  p <- p + scale_fill_gradient2()
+  p <- p + scale_fill_gradient2(guide="colourbar")
 
   if( !(is.na(label))){
     p <- p + ggtitle(label)
@@ -61,6 +61,7 @@ plotImg <- function(x, template, legend, label = NA) {
         legend.text=element_text(size=8),
         plot.title = element_text(size = 8))
   if (!legend) p <- p + theme(legend.position="none")
+ 
   return(p)
 }
 
