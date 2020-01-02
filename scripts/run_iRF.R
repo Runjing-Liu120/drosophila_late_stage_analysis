@@ -10,7 +10,7 @@ library(stringr)
 n.cores <- 3
 
 # these the PPs for which we will predict 
-pp.predict <- c(3, 7)
+pp.predict <- c(7)
 
 path <- paste0('./irf_fits/')
 dir.create(path, recursive=TRUE)
@@ -38,7 +38,7 @@ stopifnot(dim(dict)[2] == dim(alpha)[1])
 # irf parameters
 ####################
 # the threshold to be a gut gene
-response <- apply(dict[, pp.predict], 1, max)
+response <- dict[, pp.predict] # apply(dict[, pp.predict], 1, max)
 thresh.y <- quantile(response, 0.9)
 
 n.iter <- 25
@@ -80,7 +80,7 @@ runReplicate <- function(ii, thresh.y, path, loc, n.cores) {
              n.bootstrap=n.bootstrap,
              verbose=TRUE)
   
-  filename <- 'irfSpatialFit_foo'
+  filename <- 'irfSpatialFit_optix_PP7'
   colnames(x.late) <- foo
   save(file=paste0(path, filename, '.Rdata'), 
        fit, train.id, test.id, x.late, y.late)
