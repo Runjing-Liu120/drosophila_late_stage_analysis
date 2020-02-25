@@ -10,9 +10,9 @@ library(stringr)
 n.cores <- 3
 
 # these the PPs for which we will predict 
-pp.predict <- c(7)
+pp.predict <- c(8)
 
-path <- paste0('./irf_fits/')
+path <- paste0('./irf_fits_2020-02-25/')
 dir.create(path, recursive=TRUE)
 
 #################
@@ -22,11 +22,11 @@ dir.create(path, recursive=TRUE)
 x <- read.csv('../data/clean_x.csv')[, -1]
 
 # dictionary 
-dict_file <- './staNMFDicts/K=19/factorization_99.csv'
+dict_file <- './staNMFDicts/K=12/factorization_99.csv'
 dict <- read.csv(file = dict_file, header = FALSE)[, -1]
 
 # coefficients
-alpha_file <- './staNMFDicts/K=19/alpha_99.csv'
+alpha_file <- './staNMFDicts/K=12/alpha_99.csv'
 alpha <- read.csv(alpha_file)[, -1]
 
 stopifnot(dim(x)[1] == dim(dict)[1])
@@ -56,8 +56,10 @@ runReplicate <- function(ii, thresh.y, path, loc, n.cores) {
   set.seed(ii)
 
   # keep genes with expression in *any* of these pps
-  which_keep_bool <- colSums(alpha[c(3, 4, 6, 7, 11, 15), ]) > 0 # for eye pps
+  # which_keep_bool <- colSums(alpha[c(3, 4, 6, 7, 11, 15), ]) > 0 # for eye pps
   # which_keep_bool <- colSums(alpha[c(2, 8, 9, 10, 13, 18), ]) > 0 # for gut pps
+  # which_keep_bool <- colSums(alpha[c(10, 11), ]) > 0 # for eye pps
+  which_keep_bool <- colSums(alpha[c(4, 6, 8, 12), ]) > 0 # for gut pps
   gn.keep <- colnames(alpha)[which_keep_bool]
   
   print('genes kept')
@@ -66,9 +68,6 @@ runReplicate <- function(ii, thresh.y, path, loc, n.cores) {
   y.late <- as.factor(response > thresh.y)
   x.late <- x[,gn.keep]
   
-  foo <- tools::toTitleCase(colnames(x.late)) 
-  colnames(x.late) <- as.character(1:dim(x.late)[2])
-
   fit <- iRF(x=x.late[train.id,], 
              y=y.late[train.id], 
              xtest=x.late[test.id,], 
@@ -80,8 +79,7 @@ runReplicate <- function(ii, thresh.y, path, loc, n.cores) {
              n.bootstrap=n.bootstrap,
              verbose=TRUE)
   
-  filename <- 'irfSpatialFit_optix_PP7'
-  colnames(x.late) <- foo
+  filename <- 'irfSpatialFit_gut_set12pp'
   save(file=paste0(path, filename, '.Rdata'), 
        fit, train.id, test.id, x.late, y.late)
 }
