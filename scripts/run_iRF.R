@@ -22,8 +22,8 @@ if(length(args) == 0){
   set.seed(53453)
   filename <- filename
 }else{
-  p.sample <- args[1]
-  set.seed(args[2])
+  p.sample <- as.numeric(args[1])
+  set.seed(as.numeric(args[2]))
   filename <- args[3]
 }
 
