@@ -10,9 +10,9 @@ library(stringr)
 n.cores <- 3
 
 # these the PPs for which we will predict 
-pp.predict <- c(8)
+pp.predict <- c(10, 11)
 
-path <- paste0('./irf_fits_2020-02-25/')
+path <- paste0('./irf_fits_2020-04-13/')
 dir.create(path, recursive=TRUE)
 
 #################
@@ -22,12 +22,13 @@ dir.create(path, recursive=TRUE)
 x <- read.csv('../data/clean_x.csv')[, -1]
 
 # dictionary 
-dict_file <- './staNMFDicts/K=12/factorization_99.csv'
+dict_file <- './staNMFDicts/K=19/factorization_99.csv'
 dict <- read.csv(file = dict_file, header = FALSE)[, -1]
 
 # coefficients
-alpha_file <- './staNMFDicts/K=12/alpha_99.csv'
+alpha_file <- './staNMFDicts/K=19/alpha_99.csv'
 alpha <- read.csv(alpha_file)[, -1]
+
 
 stopifnot(dim(x)[1] == dim(dict)[1])
 stopifnot(dim(x)[2] == dim(alpha)[2])
@@ -38,7 +39,7 @@ stopifnot(dim(dict)[2] == dim(alpha)[1])
 # irf parameters
 ####################
 # the threshold to be a gut gene
-response <- dict[, pp.predict] # apply(dict[, pp.predict], 1, max)
+response <- apply(dict[, pp.predict], 1, max)
 thresh.y <- quantile(response, 0.9)
 
 n.iter <- 25
@@ -56,10 +57,10 @@ runReplicate <- function(ii, thresh.y, path, loc, n.cores) {
   set.seed(ii)
 
   # keep genes with expression in *any* of these pps
-  # which_keep_bool <- colSums(alpha[c(3, 4, 6, 7, 11, 15), ]) > 0 # for eye pps
+  which_keep_bool <- colSums(alpha[c(3, 4, 6, 7, 11, 15), ]) > 0 # for eye pps
   # which_keep_bool <- colSums(alpha[c(2, 8, 9, 10, 13, 18), ]) > 0 # for gut pps
   # which_keep_bool <- colSums(alpha[c(10, 11), ]) > 0 # for eye pps
-  which_keep_bool <- colSums(alpha[c(4, 6, 8, 12), ]) > 0 # for gut pps
+  # which_keep_bool <- colSums(alpha[c(4, 6, 8, 12), ]) > 0 # for gut pps
   gn.keep <- colnames(alpha)[which_keep_bool]
   
   print('genes kept')
@@ -79,7 +80,7 @@ runReplicate <- function(ii, thresh.y, path, loc, n.cores) {
              n.bootstrap=n.bootstrap,
              verbose=TRUE)
   
-  filename <- 'irfSpatialFit_gut_set12pp'
+  filename <- 'irfSpatialFit_eye_set19pp'
   save(file=paste0(path, filename, '.Rdata'), 
        fit, train.id, test.id, x.late, y.late)
 }

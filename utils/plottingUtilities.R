@@ -287,7 +287,7 @@ plot_all_PPs <- function(dict, template, reference = NULL, ncols = 5){
 
     p <- list()
       for(i in 1:dim(dict)[2]){
-        p[[i]] <- plotImg(dict[, perm[i]], late$template, FALSE, paste0('PP', i))
+        p[[i]] <- plotImg(dict[, perm[i]], template, FALSE, paste0('PP', i))
       }
 
       plot <- multiplot(plotlist = p, cols = ncols)
