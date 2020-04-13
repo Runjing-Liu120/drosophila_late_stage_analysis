@@ -130,6 +130,13 @@ runReplicate <- function(ii, thresh.y, path, loc, n.cores) {
   print(outfile)
   save(file=outfile, 
        fit, train.id, test.id, x.late, y.late)
+  
+  # save tables of interactions  
+  write.csv(file=paste0(path, filename, '_interactions.txt'), 
+       fit$interaction)
+  # save gene names  
+  write.csv(file=paste0(path, filename, '_genes.txt'), 
+            colnames(x.late))
 }
 
 runReplicate(ii=1, thresh.y=thresh.y, path=path, 
