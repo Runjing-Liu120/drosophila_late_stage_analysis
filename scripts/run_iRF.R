@@ -10,11 +10,11 @@ library(stringr)
 n.cores <- 3
 
 # these the PPs for which we will predict 
-pp.predict <- c(8)
+pp.predict <- c(11)
 
 path <- paste0('./irf_fits_2020-04-13/')
 dir.create(path, recursive=TRUE)
-filename <- 'irfSpatialFit_gut_set12pp'
+filename <- 'irfSpatialFit_eye_set12pp'
 
 args = commandArgs(trailingOnly=TRUE)
 if(length(args) == 0){
@@ -104,8 +104,8 @@ runReplicate <- function(ii, thresh.y, path, loc, n.cores) {
   # keep genes with expression in *any* of these pps
   # which_keep_bool <- colSums(alpha[c(3, 4, 6, 7, 11, 15), ]) > 0 # for eye pps
   # which_keep_bool <- colSums(alpha[c(2, 8, 9, 10, 13, 18), ]) > 0 # for gut pps
-  # which_keep_bool <- colSums(alpha[c(10, 11), ]) > 0 # for eye pps
-  which_keep_bool <- colSums(alpha[c(4, 6, 8, 12), ]) > 0 # for gut pps
+  which_keep_bool <- colSums(alpha[c(10, 11), ]) > 0 # for eye pps
+  # which_keep_bool <- colSums(alpha[c(4, 6, 8, 12), ]) > 0 # for gut pps
   gn.keep <- colnames(alpha)[which_keep_bool]
   
   print('genes kept')
