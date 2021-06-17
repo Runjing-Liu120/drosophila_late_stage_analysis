@@ -7,7 +7,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--dataset_dir',
                     default='../data/clean_x.csv', type=str)
 parser.add_argument('--folderID',
-                    default='../model_fits/nmf_fits/', type=str)
+                    default='', type=str)
 parser.add_argument('--k1', default = 15, type = int)
 parser.add_argument('--k2', default = 30, type = int)
 parser.add_argument('--replicates', default = 100, type = int)
