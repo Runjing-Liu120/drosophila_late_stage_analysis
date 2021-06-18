@@ -11,6 +11,8 @@ n.cores <- 3
 
 # these the PPs for which we will predict 
 pp.predict <- c(11) # eye PP
+# pp.predict <- c(8) # gut pp
+
 
 # path and filename, where to save the fits
 path <- paste0('../model_fits/irf_fits_2021-06-18/')
@@ -124,8 +126,7 @@ runReplicate <- function(ii, thresh.y, path, loc, n.cores) {
              n.iter=n.iter, 
              n.core=n.cores,
              rit.param=rit.param,
-	     interactions.return=c(n.iter),
-             # select.iter=TRUE,
+             select.iter=TRUE,
              n.bootstrap=n.bootstrap,
              verbose=TRUE)
   
