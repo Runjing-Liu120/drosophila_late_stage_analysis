@@ -10,9 +10,10 @@ library(stringr)
 n.cores <- 3
 
 # these the PPs for which we will predict 
-pp.predict <- c(11)
+pp.predict <- c(11) # eye PP
 
-path <- paste0('./irf_fits_2020-04-13/')
+# path and filename, where to save the fits
+path <- paste0('../model_fits/irf_fits_2021-06-18/')
 dir.create(path, recursive=TRUE)
 filename <- 'irfSpatialFit_eye_set12pp'
 
@@ -54,17 +55,16 @@ CombineReplicates <- function(x){
 # images
 x.raw <- read.csv('../data/clean_x.csv')[, -1]
 x <- CombineReplicates(x.raw)
-# x <- x[, colnames(x) != 'Pdp1']
 
 # dictionary 
-dict_file <- './staNMFDicts/K=12/factorization_99.csv'
+nmf_folder <- '../model_fits/nmf_fits/staNMFDicts/'
+dict_file <- paste0(nmf_folder, 'K=12/factorization_99.csv')
 dict <- read.csv(file = dict_file, header = FALSE)[, -1]
 
 # coefficients
-alpha_file <- './staNMFDicts/K=12/alpha_99.csv'
+alpha_file <- paste0(nmf_folder, 'K=12/alpha_99.csv')
 alpha.raw <- read.csv(alpha_file)[, -1]
 alpha <- CombineReplicates(alpha.raw)
-# alpha <- alpha[, colnames(alpha) != 'Pdp1']
 
 # subsample 
 if(p.sample < 1){
@@ -104,14 +104,17 @@ runReplicate <- function(ii, thresh.y, path, loc, n.cores) {
   # keep genes with expression in *any* of these pps
   # which_keep_bool <- colSums(alpha[c(3, 4, 6, 7, 11, 15), ]) > 0 # for eye pps
   # which_keep_bool <- colSums(alpha[c(2, 8, 9, 10, 13, 18), ]) > 0 # for gut pps
+
   which_keep_bool <- colSums(alpha[c(10, 11), ]) > 0 # for eye pps
   # which_keep_bool <- colSums(alpha[c(4, 6, 8, 12), ]) > 0 # for gut pps
+  
   gn.keep <- colnames(alpha)[which_keep_bool]
   
   print('genes kept')
   print(length(gn.keep))
   # Convert dictionary atom for given pp into binary response by thresholding.
   y.late <- as.factor(response > thresh.y)
+  print(table(y.late))
   x.late <- x[,gn.keep]
   
   fit <- iRF(x=x.late[train.id,], 
@@ -121,7 +124,8 @@ runReplicate <- function(ii, thresh.y, path, loc, n.cores) {
              n.iter=n.iter, 
              n.core=n.cores,
              rit.param=rit.param,
-             select.iter=TRUE,
+	     interactions.return=c(n.iter),
+             # select.iter=TRUE,
              n.bootstrap=n.bootstrap,
              verbose=TRUE)
   

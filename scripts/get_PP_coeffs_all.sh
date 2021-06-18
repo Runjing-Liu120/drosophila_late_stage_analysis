@@ -1,3 +1,3 @@
 #!/bin/bash
 
-sbatch --array 3-30 get_PP_coeffs.sh
+sbatch --array 3-20 get_PP_coeffs.sh
